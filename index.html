@@ -16,7 +16,7 @@
             align-items: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
-            touch-action: manipulation; /* Prevents zooming when tapping fast */
+            touch-action: manipulation;
         }
 
         .card {
@@ -29,7 +29,7 @@
             width: 85%;
             animation: pop 1s ease;
             position: relative;
-            z-index: 2;
+            z-index: 10;
         }
 
         @keyframes pop {
@@ -41,27 +41,30 @@
         h2 { color: #333; font-size: 20px; }
         p { color: #444; font-size: 16px; margin: 20px 0; }
 
-        .buttons { margin-top: 30px; }
+        .buttons { margin-top: 30px; display: flex; flex-direction: column; align-items: center; }
 
         button {
             border: none;
-            padding: 12px 20px;
+            padding: 12px 25px;
             margin: 8px;
             font-size: 16px;
             border-radius: 25px;
             cursor: pointer;
             transition: 0.3s;
             font-weight: bold;
+            width: 200px;
         }
 
         #yes { background: #ff4d88; color: white; }
         #forever { background: #d63384; color: white; }
+        
         #no {
             background: #ccc;
             color: black;
             position: absolute;
-            z-index: 10;
-            transition: 0.2s ease;
+            z-index: 100;
+            width: auto;
+            transition: 0.1s ease;
         }
 
         button:hover { transform: scale(1.1); }
@@ -72,12 +75,13 @@
             font-size: 20px;
             animation: float 5s linear infinite;
             color: #ff3366;
-            pointer-events: none; /* Hearts won't block clicks */
+            pointer-events: none;
+            z-index: 1;
         }
 
         @keyframes float {
-            0% { transform: translateY(0) translateX(0); opacity: 1; }
-            100% { transform: translateY(-110vh) translateX(50px); opacity: 0; }
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
     </style>
 </head>
@@ -85,12 +89,12 @@
 
 <div class="card" id="mainCard">
     <h1>My Dear Kusuma ❤️</h1>
-    <p>From the moment you entered my life,<br>everything became beautiful.</p>
+    <p>From the moment when i saw you first time,<br>everything became beautiful🥰❣️♥️.</p>
     <h2>Will you be my<br>Better‑Half? 💍</h2>
 
     <div class="buttons">
-        <button id="yes" onclick="accept()">Yes 🥰</button>
-        <button id="forever" onclick="accept()">Yes, Forever 💖</button>
+        <button id="yes" onclick="acceptStandard()">Yes 🥰</button>
+        <button id="forever" onclick="acceptForever()">Yes, Forever 💖</button>
     </div>
 </div>
 
@@ -100,12 +104,11 @@
     const noBtn = document.getElementById("no");
     const mainCard = document.getElementById("mainCard");
 
-    // Initial position
-    noBtn.style.top = "80%";
+    // Position "No" button
+    noBtn.style.top = "85%";
     noBtn.style.left = "50%";
     noBtn.style.transform = "translateX(-50%)";
 
-    // Function to move the button
     function moveButton() {
         const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
         const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
@@ -115,39 +118,59 @@
     }
 
     noBtn.addEventListener("mouseover", moveButton);
-    noBtn.addEventListener("touchstart", (e) => {
-        e.preventDefault(); // Prevents clicking on mobile
-        moveButton();
-    });
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveButton(); });
 
-    // Floating hearts
-    setInterval(() => {
+    // Floating Heart Logic
+    function createHeart(isSpecial = false) {
         const heart = document.createElement("div");
-        heart.innerHTML = "💖";
+        heart.innerHTML = isSpecial ? "💘" : "💖";
         heart.className = "heart";
         heart.style.left = Math.random() * 100 + "vw";
+        heart.style.fontSize = (Math.random() * 20 + 20) + "px";
         heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
         document.body.appendChild(heart);
         setTimeout(() => heart.remove(), 5000);
-    }, 300);
+    }
 
-    // Yes response
-    window.accept = function() {
-        noBtn.style.display = "none"; // Hide "No" forever
-        mainCard.innerHTML = `
-            <h1>She said YES! 💍❤️</h1>
-            <p>This is the beginning of our forever ✨</p>
-            <p style="font-size: 14px; color: #888;">Returning to main screen...</p>
-        `;
+    setInterval(() => createHeart(false), 300);
 
+    // Shared Reload Logic
+    function triggerReload() {
         setTimeout(() => {
             location.reload();
         }, 6000);
+    }
+
+    // Response 1: Standard Yes
+    window.acceptStandard = function() {
+        noBtn.style.display = "none";
+        mainCard.innerHTML = `
+            <h1>Yay! 🥰❤️</h1>
+            <p>You made me the happiest person, bangaram♥️!</p>
+            <p style="font-size: 14px; color: #888;">Restarting for another smile...</p>
+        `;
+        triggerReload();
+    };
+
+    // Response 2: Yes Forever
+    window.acceptForever = function() {
+        noBtn.style.display = "none";
+        
+        // Heart Storm
+        for(let i=0; i<30; i++) {
+            setTimeout(() => createHeart(true), i * 100);
+        }
+
+        mainCard.innerHTML = `
+            <h1 style="color: #d63384;">Forever & Always! ♾️❤️</h1>
+            <p>I promise to love you through every lifetime, Bangaram♥️.</p>
+            <p style="font-size: 14px; color: #888;">Restarting for another smile...</p>
+        `;
+        
+        document.body.style.background = "linear-gradient(135deg, #ff0055, #ff9a9e)";
+        triggerReload();
     };
 </script>
 
 </body>
 </html>
-
-
-
