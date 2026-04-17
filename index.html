@@ -1,111 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>For You ❤️</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You ❤️</title>
 
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        height: 100vh;
-        background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: 'Segoe UI', sans-serif;
-        overflow: hidden;
-    }
-
-    .card {
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        text-align: center;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        max-width: 350px;
-        animation: pop 1s ease;
-    }
-
-    @keyframes pop {
-        0% { transform: scale(0.8); opacity:0; }
-        100% { transform: scale(1); opacity:1; }
-    }
-
-    h1 {
-        color: #e60073;
-        font-size: 28px;
-    }
-
-    p {
-        color: #444;
-        font-size: 18px;
-        margin: 20px 0;
-    }
-
-    .buttons {
-        margin-top: 30px;
-    }
-
-    button {
-        border: none;
-        padding: 12px 20px;
-        margin: 8px;
-        font-size: 16px;
-        border-radius: 25px;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    #yes {
-        background: #ff4d88;
-        color: white;
-    }
-
-    #forever {
-        background: #d63384;
-        color: white;
-    }
-
-    #no {
-        background: #ccc;
-        color: black;
-        position: absolute;
-    }
-
-    button:hover {
-        transform: scale(1.1);
-    }
-
-    /* Heart animation */
-    .heart {
-        position: fixed;
-        bottom: -20px;
-        font-size: 20px;
-        animation: float 5s linear infinite;
-        color: #ff3366;
-    }
-
-    @keyframes float {
-        from {
-            transform: translateY(0) translateX(0);
-            opacity: 1;
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            touch-action: manipulation; /* Prevents zooming when tapping fast */
         }
-        to {
-            transform: translateY(-110vh) translateX(50px);
-            opacity: 0;
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            max-width: 320px;
+            width: 85%;
+            animation: pop 1s ease;
+            position: relative;
+            z-index: 2;
         }
-    }
-</style>
+
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity:0; }
+            100% { transform: scale(1); opacity:1; }
+        }
+
+        h1 { color: #e60073; font-size: 26px; margin-bottom: 10px; }
+        h2 { color: #333; font-size: 20px; }
+        p { color: #444; font-size: 16px; margin: 20px 0; }
+
+        .buttons { margin-top: 30px; }
+
+        button {
+            border: none;
+            padding: 12px 20px;
+            margin: 8px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        #yes { background: #ff4d88; color: white; }
+        #forever { background: #d63384; color: white; }
+        #no {
+            background: #ccc;
+            color: black;
+            position: absolute;
+            z-index: 10;
+            transition: 0.2s ease;
+        }
+
+        button:hover { transform: scale(1.1); }
+
+        .heart {
+            position: fixed;
+            bottom: -20px;
+            font-size: 20px;
+            animation: float 5s linear infinite;
+            color: #ff3366;
+            pointer-events: none; /* Hearts won't block clicks */
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 1; }
+            100% { transform: translateY(-110vh) translateX(50px); opacity: 0; }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="card">
+<div class="card" id="mainCard">
     <h1>My Dear Kusuma ❤️</h1>
-    <p>From the moment you entered my life,<br>
-       everything became beautiful.</p>
-
+    <p>From the moment you entered my life,<br>everything became beautiful.</p>
     <h2>Will you be my<br>Better‑Half? 💍</h2>
 
     <div class="buttons">
@@ -117,7 +97,29 @@
 <button id="no">No 🙈</button>
 
 <script>
-window.onload = function() {
+    const noBtn = document.getElementById("no");
+    const mainCard = document.getElementById("mainCard");
+
+    // Initial position
+    noBtn.style.top = "80%";
+    noBtn.style.left = "50%";
+    noBtn.style.transform = "translateX(-50%)";
+
+    // Function to move the button
+    function moveButton() {
+        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
+        noBtn.style.transform = "none";
+    }
+
+    noBtn.addEventListener("mouseover", moveButton);
+    noBtn.addEventListener("touchstart", (e) => {
+        e.preventDefault(); // Prevents clicking on mobile
+        moveButton();
+    });
+
     // Floating hearts
     setInterval(() => {
         const heart = document.createElement("div");
@@ -126,30 +128,22 @@ window.onload = function() {
         heart.style.left = Math.random() * 100 + "vw";
         heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
         document.body.appendChild(heart);
-
         setTimeout(() => heart.remove(), 5000);
     }, 300);
 
-    // No button escape
-    const noBtn = document.getElementById("no");
-    noBtn.style.top = "80%";
-    noBtn.style.left = "50%";
-
-    noBtn.addEventListener("mouseover", () => {
-        noBtn.style.top = Math.random() * 80 + "%";
-        noBtn.style.left = Math.random() * 80 + "%";
-    });
-
     // Yes response
     window.accept = function() {
-        document.body.innerHTML = `
-            <div class="card">
-                <h1>She said YES! 💍❤️</h1>
-                <p>This is the beginning of our forever ✨</p>
-            </div>
+        noBtn.style.display = "none"; // Hide "No" forever
+        mainCard.innerHTML = `
+            <h1>She said YES! 💍❤️</h1>
+            <p>This is the beginning of our forever ✨</p>
+            <p style="font-size: 14px; color: #888;">Returning to main screen...</p>
         `;
-    }
-};
+
+        setTimeout(() => {
+            location.reload();
+        }, 6000);
+    };
 </script>
 
 </body>
