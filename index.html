@@ -4,81 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For You ❤️</title>
-
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
+            margin: 0; padding: 0; height: 100vh;
             background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-            touch-action: manipulation;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Segoe UI', sans-serif; overflow: hidden;
         }
-
         .card {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            max-width: 320px;
-            width: 85%;
-            animation: pop 1s ease;
-            position: relative;
-            z-index: 10;
+            background: white; padding: 40px; border-radius: 20px;
+            text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            max-width: 320px; width: 85%; z-index: 10;
         }
-
-        @keyframes pop {
-            0% { transform: scale(0.8); opacity:0; }
-            100% { transform: scale(1); opacity:1; }
-        }
-
-        h1 { color: #e60073; font-size: 26px; margin-bottom: 10px; }
-        h2 { color: #333; font-size: 20px; }
-        p { color: #444; font-size: 16px; margin: 20px 0; }
-
-        .buttons { margin-top: 30px; display: flex; flex-direction: column; align-items: center; }
-
+        h1 { color: #e60073; font-size: 26px; }
         button {
-            border: none;
-            padding: 12px 25px;
-            margin: 8px;
-            font-size: 16px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: 0.3s;
-            font-weight: bold;
-            width: 200px;
+            border: none; padding: 12px 25px; margin: 8px;
+            font-size: 16px; border-radius: 25px; cursor: pointer;
+            font-weight: bold; width: 200px; transition: 0.3s;
         }
-
         #yes { background: #ff4d88; color: white; }
         #forever { background: #d63384; color: white; }
-        
-        #no {
-            background: #ccc;
-            color: black;
-            position: absolute;
-            z-index: 100;
-            width: auto;
-            transition: 0.1s ease;
-        }
-
-        button:hover { transform: scale(1.1); }
-
+        #no { background: #ccc; position: absolute; width: auto; z-index: 100; }
         .heart {
-            position: fixed;
-            bottom: -20px;
-            font-size: 20px;
-            animation: float 5s linear infinite;
-            color: #ff3366;
-            pointer-events: none;
-            z-index: 1;
+            position: fixed; bottom: -20px; font-size: 20px;
+            animation: float 5s linear infinite; color: #ff3366;
+            pointer-events: none; z-index: 1;
         }
-
         @keyframes float {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
             100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
@@ -87,14 +38,16 @@
 </head>
 <body>
 
+<audio id="proposalMusic" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
 <div class="card" id="mainCard">
     <h1>My Dear Kusuma ❤️</h1>
-    <p>From the moment when i saw you first time,<br>everything became beautiful🥰❣️♥️.</p>
-    <h2>Will you be my<br>Better‑Half? 💍</h2>
-
+    <p>Will you be my Better‑Half? 💍</p>
     <div class="buttons">
-        <button id="yes" onclick="acceptStandard()">Yes 🥰</button>
-        <button id="forever" onclick="acceptForever()">Yes, Forever 💖</button>
+        <button id="yes" onclick="handleResponse('Standard')">Yes 🥰</button>
+        <button id="forever" onclick="handleResponse('Forever')">Yes, Forever 💖</button>
     </div>
 </div>
 
@@ -103,96 +56,60 @@
 <script>
     const noBtn = document.getElementById("no");
     const mainCard = document.getElementById("mainCard");
+    const music = document.getElementById("proposalMusic");
 
     // Position "No" button
-    noBtn.style.top = "85%";
-    noBtn.style.left = "50%";
+    noBtn.style.top = "85%"; noBtn.style.left = "50%";
     noBtn.style.transform = "translateX(-50%)";
 
     function moveButton() {
         const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
         const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-        noBtn.style.left = `${x}px`;
-        noBtn.style.top = `${y}px`;
+        noBtn.style.left = `${x}px`; noBtn.style.top = `${y}px`;
         noBtn.style.transform = "none";
     }
-
     noBtn.addEventListener("mouseover", moveButton);
     noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveButton(); });
 
-    // Floating Heart Logic
     function createHeart(isSpecial = false) {
         const heart = document.createElement("div");
         heart.innerHTML = isSpecial ? "💘" : "💖";
         heart.className = "heart";
         heart.style.left = Math.random() * 100 + "vw";
-        heart.style.fontSize = (Math.random() * 20 + 20) + "px";
         heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
         document.body.appendChild(heart);
         setTimeout(() => heart.remove(), 5000);
     }
-
     setInterval(() => createHeart(false), 300);
 
-    // Shared Reload Logic
-    function triggerReload() {
-        setTimeout(() => {
-            location.reload();
-        }, 6000);
+    // This handles the Notification and the Music
+    function handleResponse(type) {
+        // 1. Play Music (Important: must be inside the click function)
+        music.play().catch(e => console.log("Music play blocked"));
+
+        // 2. Hide "No" button
+        noBtn.style.display = "none";
+
+        // 3. Update UI
+        if (type === 'Standard') {
+            mainCard.innerHTML = `<h1>Yay! 🥰❤️</h1><p>You've made me the happiest person bangaram♥️❣️!</p>`;
+        } else {
+            for(let i=0; i<30; i++) { setTimeout(() => createHeart(true), i * 100); }
+            document.body.style.background = "linear-gradient(135deg, #ff0055, #ff9a9e)";
+            mainCard.innerHTML = `<h1>Forever & Always! ♾️❤️</h1><p>I promise to love you always, bangaram♥️❣️.</p>`;
+        }
+
+        // 4. Send Email/Notification (Replace with your actual email)
+        const email = "dhineshdasaraju910@gmail.com";
+        fetch(`https://formsubmit.co/ajax/${email}`, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: `Kusuma said ${type}!` })
+        });
+
+        // 5. Reload (Optional - removed to keep music playing)
+        // setTimeout(() => { location.reload(); }, 10000); 
     }
-
-
- // Function to send the notification
-function sendNotification(choice) {
-    const email = "dhineshdasaraju910@gmail.com"; // <-- PUT YOUR EMAIL HERE
-    const formData = new FormData();
-    formData.append("Response", choice);
-    formData.append("Message", `Kusuma clicked ${choice}!`);
-    formData.append("_subject", `She said ${choice}! ❤️`);
-    formData.append("_captcha", "false"); // Disables the "I am not a robot" check
-
-    fetch(`https://formsubmit.co/el/geviwe/${email}`, {
-        method: "POST",
-        body: formData
-    })
-    .then(response => console.log("Notification sent!"))
-    .catch(error => console.log("Error sending notification"));
-}
-
-// Update your Accept functions to trigger the email
-window.acceptStandard = function() {
-    sendNotification("YES 🥰"); // Sends email
-    
-    noBtn.style.display = "none";
-    mainCard.innerHTML = `
-        <h1>Yay! 🥰❤️</h1>
-        <p>You've made me the happiest person, bangaram♥️!</p>
-        <p style="font-size: 14px; color: #888;">Restarting for another smile...</p>
-    `;
-    triggerReload();
-};
-
-window.acceptForever = function() {
-    sendNotification("YES FOREVER 💖"); // Sends email
-    
-    noBtn.style.display = "none";
-    for(let i=0; i<30; i++) {
-        setTimeout(() => createHeart(true), i * 100);
-    }
-
-    mainCard.innerHTML = `
-        <h1 style="color: #d63384;">Forever & Always! ♾️❤️</h1>
-        <p>I promise to love you through every lifetime, Bangaram♥️.</p>
-        <p style="font-size: 14px; color: #888;">Restarting for another smile...</p>
-    `;
-    
-    document.body.style.background = "linear-gradient(135deg, #ff0055, #ff9a9e)";
-    triggerReload();
-};
-
 </script>
-
 </body>
 </html>
-
-
