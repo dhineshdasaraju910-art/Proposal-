@@ -143,6 +143,10 @@
 
     // Response 1: Standard Yes
     window.acceptStandard = function() {
+        
+        const music = document.getElementById("proposalMusic");
+    music.play(); // This starts the music!
+    
         noBtn.style.display = "none";
         mainCard.innerHTML = `
             <h1>Yay! 🥰❤️</h1>
