@@ -46,11 +46,11 @@
     <h1>My Dear Kusuma ❤️</h1>
 
    <p>From the moment you when i saw you,<br>
-       everything became beautiful🥰.</p>
+        everything became beautiful🥰.</p>
     
     <p>Will you be my Better‑Half? 💍</p>
     <div class="buttons">
-        <button id="yes" onclick="handleResponse('Standard')">Yes 🥰</button>
+        <button id="yes" onclick="handleResponse('Yes')">Yes 🥰</button>
         <button id="forever" onclick="handleResponse('Forever')">Yes, Forever 💖</button>
     </div>
 </div>
@@ -88,7 +88,7 @@
         // Play Music
         music.play();
 
-        // Send Email (Replace with your email!)
+        // Send Email
         const email = "dhineshdasaraju910@gmail.com";
         fetch(`https://formsubmit.co/ajax/${email}`, {
             method: "POST",
@@ -98,7 +98,7 @@
 
         // Update UI
         noBtn.style.display = "none";
-        if (type === standard) {
+        if (type === 'Yes') {
             mainCard.innerHTML = `<h1>Yay! 🥰❤️</h1><p>You've made me the happiest person bangaram❣️!</p>`;
         } else {
             for(let i=0; i<30; i++) { setTimeout(() => createHeart(true), i * 100); }
