@@ -38,14 +38,10 @@
 </head>
 <body>
 
-<audio id="proposalMusic">
-    <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
-</audio>
-
 <div class="card" id="mainCard">
     <h1>My Dear Kusuma ❤️</h1>
 
-   <p>From the moment you when i saw you,<br>
+   <p>From the moment when I saw you,<br>
         everything became beautiful🥰.</p>
     
     <p>Will you be my Better‑Half? 💍</p>
@@ -60,7 +56,6 @@
 <script>
     const noBtn = document.getElementById("no");
     const mainCard = document.getElementById("mainCard");
-    const music = document.getElementById("proposalMusic");
 
     noBtn.style.top = "85%"; noBtn.style.left = "50%";
     noBtn.style.transform = "translateX(-50%)";
@@ -85,8 +80,16 @@
     setInterval(() => createHeart(false), 300);
 
     function handleResponse(type) {
-        // Play Music
-        music.play();
+        // Update UI immediately
+        noBtn.style.display = "none";
+        
+        if (type === 'Yes') {
+            mainCard.innerHTML = `<h1>Yay! 🥰❤️</h1><p>You've made me the happiest person bangaram❣️!</p>`;
+        } else {
+            for(let i=0; i<30; i++) { setTimeout(() => createHeart(true), i * 100); }
+            document.body.style.background = "linear-gradient(135deg, #ff0055, #ff9a9e)";
+            mainCard.innerHTML = `<h1>Forever & Always! ♾️❤️</h1><p>I promise to love you always & forever, bangaram ♥️❣️.</p>`;
+        }
 
         // Send Email
         const email = "dhineshdasaraju910@gmail.com";
@@ -95,16 +98,6 @@
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ message: `Kusuma said: ${type}!` })
         });
-
-        // Update UI
-        noBtn.style.display = "none";
-        if (type === 'Yes') {
-            mainCard.innerHTML = `<h1>Yay! 🥰❤️</h1><p>You've made me the happiest person bangaram❣️!</p>`;
-        } else {
-            for(let i=0; i<30; i++) { setTimeout(() => createHeart(true), i * 100); }
-            document.body.style.background = "linear-gradient(135deg, #ff0055, #ff9a9e)";
-            mainCard.innerHTML = `<h1>Forever & Always! ♾️❤️</h1><p>I promise to love you always & forever, bangaram ♥️❣️.</p>`;
-        }
 
         // Timeout Reload (6 seconds)
         setTimeout(() => {
